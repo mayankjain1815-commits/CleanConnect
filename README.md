@@ -67,9 +67,9 @@ Municipal waste collection is hard to audit. Trucks can skip streets, citizens c
 | --- | --- |
 | ![Login](docs/screenshots/02-login.png) | ![Citizen instructions](docs/screenshots/04-citizen-instructions.png) |
 
-| Admin instructions | |
-| --- | --- |
-| ![Admin instructions](docs/screenshots/08-admin-instructions.png) | |
+| Admin instructions |
+| --- |
+| ![Admin instructions](docs/screenshots/08-admin-instructions.png) |
 
 ## Tech stack
 
