@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "DM Sans", sans-serif;
+  overflow-x: clip;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@layer base {
+  :root,
+  .dark {
+    color-scheme: dark;
+
+    /* Core palette: deep burgundy #590907, warm cream #E8D2B5, muted sage #A5A79B */
+    --background: 1 85% 19%;
+    --foreground: 34 53% 81%;
+    --card: 1 80% 14%;
+    --card-foreground: 34 53% 81%;
+    --popover: 1 80% 14%;
+    --popover-foreground: 34 53% 81%;
+    --primary: 34 53% 81%;
+    --primary-foreground: 1 85% 19%;
+    --secondary: 1 48% 24%;
+    --secondary-foreground: 34 53% 81%;
+    --muted: 1 45% 16%;
+    --muted-foreground: 70 6% 63%;
+    --accent: 1 48% 24%;
+    --accent-foreground: 34 53% 81%;
+    --destructive: 6 72% 64%;
+    --destructive-foreground: 1 85% 13%;
+    --border: 70 8% 32%;
+    --input: 70 8% 36%;
+    --ring: 34 53% 81%;
+    --radius: 0.5rem;
+
+    --background-dark: 1 85% 19%;
+    --background-darker: 1 85% 13%;
+    --accent-green: 34 53% 81%;
+    --accent-green-dark: 34 53% 88%;
+    --warning-orange: 28 75% 60%;
+    --success-green: 88 30% 55%;
+
+    /* Civic Score Tiers */
+    --civic-novice: 70 6% 63%;
+    --civic-champion: 38 65% 58%;
+    --civic-guardian: 88 30% 55%;
+
+    /* QR Tokens */
+    --qr-success: 90 35% 62%;
+    --qr-warning: 34 70% 65%;
+    --qr-error: 6 80% 68%;
+    --qr-container: 1 80% 14%;
+    --qr-success-foreground: 1 85% 19%;
+    --qr-warning-foreground: 1 85% 19%;
+    --qr-error-foreground: 1 85% 19%;
+
+    --sidebar-background: 1 85% 13%;
+    --sidebar-foreground: 34 53% 81%;
+    --sidebar-primary: 34 53% 81%;
+    --sidebar-primary-foreground: 1 85% 19%;
+    --sidebar-accent: 1 48% 24%;
+    --sidebar-accent-foreground: 34 53% 81%;
+    --sidebar-border: 70 8% 30%;
+    --sidebar-ring: 34 53% 81%;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 10px;
+  }
+
+  .animate-checkmark {
+    animation: checkmark-scale 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+
+  .animate-shake {
+    animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  }
+}
+
+@keyframes checkmark-scale {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-2px, 0, 0); }
+  20%, 80% { transform: translate3d(4px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-8px, 0, 0); }
+  40%, 60% { transform: translate3d(8px, 0, 0); }
+}

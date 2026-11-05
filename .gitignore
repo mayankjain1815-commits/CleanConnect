@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+apps/web/node_modules/
+apps/*/node_modules/
+
+# Build output
+dist/
+apps/web/dist/
+apps/web/node_modules/.vite/
+
+# PocketBase runtime data and binaries
+apps/pocketbase/pb_data/
+apps/pocketbase/pb_data_local/
+apps/pocketbase/pb_snapshots/
+apps/pocketbase/pocketbase
+apps/pocketbase/pocketbase-*
+apps/pocketbase/*.zip
+
+# Environment files
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Logs and OS files
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
