@@ -8,9 +8,9 @@ Repository: <https://github.com/mayankjain1815-commits/CleanConnect>
 
 GitHub's web preview does not reliably render Office documents. Use these raw-file links to download the originals and open them locally:
 
-- [IEEE report PDF](https://raw.githubusercontent.com/mayankjain1815-commits/CleanConnect/main/docs/ieee-report/CleanConnect_IEEE_Report.pdf)
-- [Presentation PPTX](https://raw.githubusercontent.com/mayankjain1815-commits/CleanConnect/main/docs/presentation/CleanConnect_Presentation.pptx)
-- [Presentation PDF](https://raw.githubusercontent.com/mayankjain1815-commits/CleanConnect/main/docs/presentation/CleanConnect_Presentation.pdf)
+- [IEEE report PDF](https://github.com/mayankjain1815-commits/CleanConnect/raw/refs/heads/main/docs/ieee-report/CleanConnect_IEEE_Report.pdf)
+- [Presentation PPTX](https://github.com/mayankjain1815-commits/CleanConnect/raw/refs/heads/main/docs/presentation/CleanConnect_Presentation.pptx)
+- [Presentation PDF](https://github.com/mayankjain1815-commits/CleanConnect/raw/refs/heads/main/docs/presentation/CleanConnect_Presentation.pdf)
 
 Current SHA-256 checksums:
 

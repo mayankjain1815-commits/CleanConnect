@@ -75,8 +75,8 @@ Municipal waste collection is hard to audit. Trucks can skip streets, citizens c
 
 | Document | Direct download | Editable source |
 | --- | --- | --- |
-| IEEE-style project report | [PDF](https://raw.githubusercontent.com/mayankjain1815-commits/CleanConnect/main/docs/ieee-report/CleanConnect_IEEE_Report.pdf) | [View on GitHub](docs/ieee-report/CleanConnect_IEEE_Report.pdf) · [Markdown](docs/ieee-report/CleanConnect_IEEE_Report.md) |
-| Companion presentation | [PPTX](https://raw.githubusercontent.com/mayankjain1815-commits/CleanConnect/main/docs/presentation/CleanConnect_Presentation.pptx) · [PDF](https://raw.githubusercontent.com/mayankjain1815-commits/CleanConnect/main/docs/presentation/CleanConnect_Presentation.pdf) | [Notes](docs/presentation/CleanConnect_Presentation.md) |
+| IEEE-style project report | [PDF](https://github.com/mayankjain1815-commits/CleanConnect/raw/refs/heads/main/docs/ieee-report/CleanConnect_IEEE_Report.pdf) | [View on GitHub](docs/ieee-report/CleanConnect_IEEE_Report.pdf) · [Markdown](docs/ieee-report/CleanConnect_IEEE_Report.md) |
+| Companion presentation | [PPTX](https://github.com/mayankjain1815-commits/CleanConnect/raw/refs/heads/main/docs/presentation/CleanConnect_Presentation.pptx) · [PDF](https://github.com/mayankjain1815-commits/CleanConnect/raw/refs/heads/main/docs/presentation/CleanConnect_Presentation.pdf) | [Notes](docs/presentation/CleanConnect_Presentation.md) |
 
 > GitHub's blob preview does not reliably render Office documents. Use the **Direct download** links above to open the files in PowerPoint, Preview, or your PDF viewer.
 
