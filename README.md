@@ -73,10 +73,12 @@ Municipal waste collection is hard to audit. Trucks can skip streets, citizens c
 
 ## Submission documents
 
-| Document | Download | Editable source |
+| Document | Direct download | Editable source |
 | --- | --- | --- |
-| IEEE-style project report | [PDF](docs/ieee-report/CleanConnect_IEEE_Report.pdf) | [Markdown](docs/ieee-report/CleanConnect_IEEE_Report.md) |
-| Companion presentation | [PDF](docs/presentation/CleanConnect_Presentation.pdf) | [PPTX](docs/presentation/CleanConnect_Presentation.pptx) · [Notes](docs/presentation/CleanConnect_Presentation.md) |
+| IEEE-style project report | [PDF](https://raw.githubusercontent.com/mayankjain1815-commits/CleanConnect/main/docs/ieee-report/CleanConnect_IEEE_Report.pdf) | [View on GitHub](docs/ieee-report/CleanConnect_IEEE_Report.pdf) · [Markdown](docs/ieee-report/CleanConnect_IEEE_Report.md) |
+| Companion presentation | [PPTX](https://raw.githubusercontent.com/mayankjain1815-commits/CleanConnect/main/docs/presentation/CleanConnect_Presentation.pptx) · [PDF](https://raw.githubusercontent.com/mayankjain1815-commits/CleanConnect/main/docs/presentation/CleanConnect_Presentation.pdf) | [Notes](docs/presentation/CleanConnect_Presentation.md) |
+
+> GitHub's blob preview does not reliably render Office documents. Use the **Direct download** links above to open the files in PowerPoint, Preview, or your PDF viewer.
 
 The report is a four-page, two-column IEEE-style paper with abstract, index terms, architecture, methodology, evaluation tables, figures, limitations, and references. The 14-slide, 16:9 presentation includes speaker notes and is suitable for hackathon demos, research/industry reviews, and startup pitches.
 

@@ -4,6 +4,22 @@ This index lists the submission-ready artifacts generated for CleanConnect and t
 
 Repository: <https://github.com/mayankjain1815-commits/CleanConnect>
 
+## Direct downloads
+
+GitHub's web preview does not reliably render Office documents. Use these raw-file links to download the originals and open them locally:
+
+- [IEEE report PDF](https://raw.githubusercontent.com/mayankjain1815-commits/CleanConnect/main/docs/ieee-report/CleanConnect_IEEE_Report.pdf)
+- [Presentation PPTX](https://raw.githubusercontent.com/mayankjain1815-commits/CleanConnect/main/docs/presentation/CleanConnect_Presentation.pptx)
+- [Presentation PDF](https://raw.githubusercontent.com/mayankjain1815-commits/CleanConnect/main/docs/presentation/CleanConnect_Presentation.pdf)
+
+Current SHA-256 checksums:
+
+| File | SHA-256 |
+| --- | --- |
+| `CleanConnect_IEEE_Report.pdf` | `b0ec765b45f6d4248da8715bf0f8f07b96586ac275c4959564084a832a86deaf` |
+| `CleanConnect_Presentation.pdf` | `a5ae701df33f55bedc278cc97d4068b37076ccda0029c4e3d83f04244343247c` |
+| `CleanConnect_Presentation.pptx` | `bd8b54e375093ede5c71e8cfd3083b763c1c85b7ad4c28f9251cb4825ae51649` |
+
 ## Artifacts
 
 | Artifact | Path | Format | Best for |
@@ -52,12 +68,13 @@ Every slide includes speaker notes in the PPTX and in the Markdown companion.
 | --- | --- |
 | `npm run lint` | Passed |
 | `npm run build` | Passed, 2092 modules transformed |
-| GitHub Actions CI on `main` | 2/2 runs passed |
+| GitHub Actions CI on `main` | 3/3 runs passed |
 | IEEE report PDF | 4 pages; all sections and references present |
-| Presentation PPTX | 14 slides; 16:9; 14 speaker-note pages |
-| Presentation PDF | 14 pages; all pages 960 x 540 pt |
+| Presentation PPTX | 14 slides; 16:9; 14 speaker-note pages; no text-box overflow or out-of-bounds shapes |
+| Presentation PDF | 14 pages; all pages 960 x 540 pt; no out-of-page text |
 | Screenshots | 8 images, all 1440 x 900 |
 | Theme tokens | Burgundy, cream, and sage confirmed in Tailwind config and browser styles |
+| Binary integrity | PDF headers/EOF and PPTX ZIP/XML validated; GitHub raw hashes match local files |
 | Secrets in tracked source | None found |
 
 ## Regenerate the documents

@@ -423,7 +423,7 @@ TABLE_I = [
 TABLE_II = [
     ("Lint", "npm run lint", "Passed"),
     ("Production build", "npm run build", "Passed, 2092 modules"),
-    ("CI", "GitHub Actions on main", "2/2 runs passed"),
+    ("CI", "GitHub Actions on main", "all runs passed"),
     ("Screenshots", "8 pages at 1440 x 900", "Validated"),
     ("Theme", "Computed browser styles", "Palette confirmed"),
     ("Seed", "npm run seed:demo", "Idempotent"),
@@ -827,6 +827,10 @@ def _add_text(slide, x, y, w, h, text, size=18, color=INK, bold=False,
     tf.clear()
     tf.word_wrap = True
     tf.vertical_anchor = valign
+    tf.margin_left = 0
+    tf.margin_right = 0
+    tf.margin_top = 0
+    tf.margin_bottom = 0
     p = tf.paragraphs[0]
     p.alignment = align
     run = p.add_run()
@@ -844,6 +848,10 @@ def _add_bullets(slide, x, y, w, h, bullets, size=16, color=INK, spacing=10):
     tf = box.text_frame
     tf.clear()
     tf.word_wrap = True
+    tf.margin_left = 0
+    tf.margin_right = 0
+    tf.margin_top = 0
+    tf.margin_bottom = 0
     for i, item in enumerate(bullets):
         p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
         p.text = "- " + item
@@ -866,6 +874,7 @@ def _add_card(slide, x, y, w, h, title, items, fill=CREAM_LIGHT, title_color=BUR
     tf.margin_left = Inches(0.22)
     tf.margin_right = Inches(0.18)
     tf.margin_top = Inches(0.16)
+    tf.margin_bottom = 0
     p = tf.paragraphs[0]
     p.text = title
     p.font.name = "Arial"

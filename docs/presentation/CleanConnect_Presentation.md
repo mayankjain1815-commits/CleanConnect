@@ -91,7 +91,7 @@
 | --- | --- | --- |
 | Lint | npm run lint | Passed |
 | Production build | npm run build | Passed, 2092 modules |
-| CI | GitHub Actions on main | 2/2 runs passed |
+| CI | GitHub Actions on main | all runs passed |
 | Screenshots | 8 pages at 1440 x 900 | Validated |
 | Theme | Computed browser styles | Palette confirmed |
 | Seed | npm run seed:demo | Idempotent |
