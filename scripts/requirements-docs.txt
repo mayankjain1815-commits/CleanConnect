@@ -1,0 +1,7 @@
+# Pinned Python dependencies for scripts/generate-submission-docs.py
+# Python 3.11+ recommended.
+reportlab==5.1.0
+python-pptx==1.0.2
+matplotlib==3.11.2
+Pillow==13.0.0
+pypdf==7.1.0

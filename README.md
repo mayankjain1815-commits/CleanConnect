@@ -71,6 +71,24 @@ Municipal waste collection is hard to audit. Trucks can skip streets, citizens c
 | --- |
 | ![Admin instructions](docs/screenshots/08-admin-instructions.png) |
 
+## Submission documents
+
+| Document | Download | Editable source |
+| --- | --- | --- |
+| IEEE-style project report | [PDF](docs/ieee-report/CleanConnect_IEEE_Report.pdf) | [Markdown](docs/ieee-report/CleanConnect_IEEE_Report.md) |
+| Companion presentation | [PDF](docs/presentation/CleanConnect_Presentation.pdf) | [PPTX](docs/presentation/CleanConnect_Presentation.pptx) · [Notes](docs/presentation/CleanConnect_Presentation.md) |
+
+The report is a four-page, two-column IEEE-style paper with abstract, index terms, architecture, methodology, evaluation tables, figures, limitations, and references. The 14-slide, 16:9 presentation includes speaker notes and is suitable for hackathon demos, research/industry reviews, and startup pitches.
+
+See [`docs/DELIVERABLES.md`](docs/DELIVERABLES.md) for the full artifact index, verification record, and regeneration instructions. To regenerate the documents:
+
+```bash
+python3 -m venv .venv-docs
+source .venv-docs/bin/activate
+python -m pip install -r scripts/requirements-docs.txt
+python scripts/generate-submission-docs.py
+```
+
 ## Tech stack
 
 | Layer | Technology |
@@ -90,8 +108,15 @@ Municipal waste collection is hard to audit. Trucks can skip streets, citizens c
 ├── apps/
 │   ├── pocketbase/           # PocketBase schema migrations, hooks, and server package
 │   └── web/                  # React + Vite frontend
-├── docs/screenshots/         # README screenshots
-├── scripts/seed-demo.mjs     # Idempotent local demo data seeder
+├── docs/
+│   ├── ieee-report/          # IEEE-style report PDF, source, and figures
+│   ├── presentation/         # 14-slide PPTX, PDF, notes, and assets
+│   ├── screenshots/          # README screenshots
+│   └── DELIVERABLES.md       # Submission artifact index and verification record
+├── scripts/
+│   ├── generate-submission-docs.py  # Reproducible report/deck generator
+│   ├── requirements-docs.txt        # Pinned Python dependencies for the generator
+│   └── seed-demo.mjs                # Idempotent local demo data seeder
 ├── package.json              # npm workspaces + convenience scripts
 └── README.md
 ```

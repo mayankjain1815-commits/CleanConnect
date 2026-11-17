@@ -7,6 +7,7 @@ apps/*/node_modules/
 dist/
 apps/web/dist/
 apps/web/node_modules/.vite/
+apps/web/public/llms.txt
 
 # PocketBase runtime data and binaries
 apps/pocketbase/pb_data/
@@ -27,6 +28,11 @@ apps/pocketbase/*.zip
 npm-debug.log*
 .DS_Store
 Thumbs.db
+
+# Python environments and caches
+.venv*/
+__pycache__/
+*.py[cod]
 
 # Editor files
 .vscode/
