@@ -11,7 +11,7 @@ const HomePage = () => {
     <>
       <Helmet>
         <title>CleanConnect - Smart Waste Management for Sustainable Cities</title>
-        <meta name="description" content="Transform urban waste collection with AI-powered verification, green token rewards, and real-time route optimization" />
+        <meta name="description" content="Track each pickup with a QR scan, GPS check, Civic Points and simple driver route views" />
       </Helmet>
 
       <Header />
@@ -35,7 +35,7 @@ const HomePage = () => {
               Smart waste management for sustainable cities
             </h1>
             <p className="text-xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
-              Transform urban waste collection with AI-powered verification, green token rewards, and real-time route optimization
+              Track each pickup with a QR scan, GPS check, Civic Points and simple driver route views
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/signup">

@@ -16,9 +16,9 @@ Current SHA-256 checksums:
 
 | File | SHA-256 |
 | --- | --- |
-| `CleanConnect_IEEE_Report.pdf` | `b0ec765b45f6d4248da8715bf0f8f07b96586ac275c4959564084a832a86deaf` |
-| `CleanConnect_Presentation.pdf` | `a5ae701df33f55bedc278cc97d4068b37076ccda0029c4e3d83f04244343247c` |
-| `CleanConnect_Presentation.pptx` | `bd8b54e375093ede5c71e8cfd3083b763c1c85b7ad4c28f9251cb4825ae51649` |
+| `CleanConnect_IEEE_Report.pdf` | `0d2e2db23ae178faf552feaa23d94e52ffafdde14d237446da184777c78ede2d` |
+| `CleanConnect_Presentation.pdf` | `5255a6809b3ad52ac9d946bfc816b9ac217e8eaad4f7d2d750b39da0a690f1e3` |
+| `CleanConnect_Presentation.pptx` | `732bea3518a1debcbad19a31934375d2c6ca2346f7237dc488e3aee8b8c17bcd` |
 
 ## Artifacts
 
@@ -45,19 +45,19 @@ Current SHA-256 checksums:
 
 ## What the deck contains
 
-1. Title and positioning
-2. Problem statement
-3. End-to-end solution
-4. System architecture
-5. QR and geofence verification
-6. Data model
-7. Citizen experience
-8. Driver and administrator operations
-9. Civic Points incentive design
-10. Repository and demo validation
-11. Reproducible evaluation setup
-12. Submission value for hackathons, research, and startups
-13. Limitations and next steps
+1. Title
+2. The problem
+3. One scan at the bin
+4. Architecture
+5. The scan check
+6. What is stored
+7. Citizen side
+8. Driver and admin views
+9. Civic Points
+10. Validation
+11. Demo setup
+12. Use cases
+13. What is not done yet
 14. Closing and repository link
 
 Every slide includes speaker notes in the PPTX and in the Markdown companion.
@@ -68,11 +68,12 @@ Every slide includes speaker notes in the PPTX and in the Markdown companion.
 | --- | --- |
 | `npm run lint` | Passed |
 | `npm run build` | Passed, 2092 modules transformed |
-| GitHub Actions CI on `main` | 3/3 runs passed |
+| GitHub Actions CI | Lint and build on pushes and pull requests to `main`; history lives on GitHub |
 | IEEE report PDF | 4 pages; all sections and references present |
 | Presentation PPTX | 14 slides; 16:9; 14 speaker-note pages; no text-box overflow or out-of-bounds shapes |
 | Presentation PDF | 14 pages; all pages 960 x 540 pt; no out-of-page text |
 | Screenshots | 8 images, all 1440 x 900 |
+| Demo seed | Repeatable; scans, ledger and payroll rows are recreated |
 | Theme tokens | Burgundy, cream, and sage confirmed in Tailwind config and browser styles |
 | Binary integrity | PDF headers/EOF and PPTX ZIP/XML validated; GitHub raw hashes match local files |
 | Secrets in tracked source | None found |
@@ -114,4 +115,4 @@ PB_SUPERUSER_PASSWORD='your-superuser-password' \
 npm run seed:demo
 ```
 
-The seed script is idempotent and includes both successful and mismatched scans so that dashboards show realistic states during a live demo.
+The seed script is repeatable and includes both successful and mismatched scans so that dashboards show realistic states during a live demo. Most rows are upserted, while scans, ledger rows and the payroll row are recreated each run.

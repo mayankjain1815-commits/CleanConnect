@@ -99,8 +99,8 @@ const CitizenDashboard = () => {
       formData.append('citizen_id', citizenData.id);
       formData.append('image_proof', file);
       formData.append('verification_status', 'pending');
-      formData.append('ai_confidence_score', 95); // Simulating high AI score for demo
-      formData.append('tokens_awarded', 50);
+      formData.append('ai_confidence_score', 95); // Demo value only; no model checks this image
+      formData.append('tokens_awarded', 0);
 
       await pb.collection('service_verifications').create(formData, { $autoCancel: false });
       
@@ -108,7 +108,7 @@ const CitizenDashboard = () => {
       try {
         const { newScore, newTier, pointsChanged } = await updateCivicScore(pb, currentUser.id, 'Accurate_Segregation');
         setCivicScoreData({ current_score: newScore, tier_rank: newTier });
-        toast.success(`Waste verified! +${pointsChanged} Civic Points & 50 Green Tokens.`);
+        toast.success(`Verification submitted. +${pointsChanged} Civic Points added.`);
       } catch (scoreErr) {
         toast.success('Verification submitted. Pending review.');
       }

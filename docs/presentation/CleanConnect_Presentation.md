@@ -5,143 +5,144 @@
 ## Slide 1: CleanConnect
 
 
-**Speaker notes:** Open with the problem: waste collection is frequent but rarely verified at household level. CleanConnect closes that loop with a QR scan and a GPS geofence.
+**Speaker notes:** Start with the situation: a truck can pass a street and one house may still say its bin was not collected. We built a simple scan flow around that moment.
 
-## Slide 2: Household collection lacks proof
+## Slide 2: The problem is small but real
 
-- Missed pickups are hard to prove after the truck has moved on.
-- Route-level reporting hides what happened at a specific bin.
-- Citizens receive little feedback for correct waste behavior.
-- Drivers and administrators lack a shared, timestamped audit trail.
-- Hardware-heavy smart-bin systems are costly to scale.
+- A missed bin is hard to prove after the truck leaves.
+- Route-level reports do not show what happened at one house.
+- Citizens get little feedback when they do the right thing.
+- Drivers and admins do not share one clear record of the pickup.
+- Smart-bin hardware helps, but putting sensors on every bin is expensive.
 
-**Speaker notes:** Emphasize that the goal is not just a dashboard, but a verifiable event that can drive accountability and incentives.
+**Speaker notes:** Do not oversell this. Say we were trying to solve a narrow, everyday problem, not redesign the whole waste industry.
 
-## Slide 3: One verified pickup closes the loop
+## Slide 3: One scan at the bin
 
-**What makes it different**
+**What we actually did**
 
-- No dedicated bin sensors required.
-- Accuracy-aware 50 m geofence with capped GPS tolerance.
-- Manual token fallback when the camera is unavailable.
-- Reproducible demo data and CI validation.
+- No extra hardware on the bin.
+- 50 m radius plus up to 30 m GPS accuracy buffer.
+- Camera scan with a manual fallback.
+- Seeded demo data so the flow is easy to show.
 
 **Main points**
 
-- Citizen generates a QR token bound to a saved bin location.
-- Driver scans at the curb; app checks GPS distance.
-- Successful scan awards Civic Points and writes a ledger entry.
-- Administrator sees scans, bins, routes, scores, and payroll.
+- Household gets a QR token tied to its saved bin location.
+- Driver scans it or types the token by hand.
+- App checks GPS distance and saves a scan result.
+- A good scan adds 15 Civic Points to the household.
 
-**Speaker notes:** Frame the solution as a workflow, not a collection of screens. Each role gets value from the same scan event.
+**Speaker notes:** Explain this as a flow, not as a list of screens. The same scan record is what the citizen, driver and admin views all use.
 
-## Slide 4: A thin client over a typed backend
+## Slide 4: How the app is put together
 
-- React 18 + Vite 7 frontend with role-protected routes.
-- PocketBase 0.38 provides auth, REST, SQLite, rules, hooks.
-- Migrations define 15+ collections and seed defaults.
-- Static frontend can be hosted separately from PocketBase.
+- React 18 and Vite 7 frontend with role-protected routes.
+- PocketBase 0.38.0 handles auth, REST, rules and hooks.
+- 14 custom collections plus the built-in users collection.
+- The browser computes the distance and posts the result.
 
-**Speaker notes:** The architecture is intentionally simple: a static SPA, a lightweight backend, and a single source of truth in SQLite.
+**Speaker notes:** Point out that this is a simple setup: a static frontend and one small backend. Also be honest that the distance check is client-side for now.
 
-## Slide 5: QR + geofence verification
+## Slide 5: The scan check
 
 
-**Speaker notes:** Walk through the seven steps. Highlight that mismatch and invalid-token states are recorded, not silently ignored.
+**Speaker notes:** Walk through the seven steps on the diagram. Mention that success, mismatch and invalid token are all saved. The backend currently trusts the distance value sent by the browser.
 
-## Slide 6: Collections behind the workflow
+## Slide 6: What is stored
 
 | Collection group | What it stores | Why it matters |
 | --- | --- | --- |
-| users, citizens, drivers | Identity, role, zone, balances | Role-based access and profiles |
-| zones, routes, bins | Service geography and fill level | Route assignment and monitoring |
-| bin_qr_tokens, scans | Token, geofence, scan outcome | Verifiable pickup evidence |
-| scores, ledger, rewards | Civic Points and redemptions | Incentive loop |
-| payroll_adjustments | Strikes and deductions | Driver accountability |
+| users, citizens, drivers | Identity, role, zone, balances | Login and workspaces |
+| zones, routes, bins | Service area and fill levels | Route and bin views |
+| bin_qr_tokens, scans | Token, geofence, scan status | Pickup record |
+| scores, rewards | Civic Points and redemptions | Incentives that work |
+| ledger, payroll | Admin-only rows and wage data | Currently limited in UI |
 
-**Speaker notes:** Point out that scan records are the hub: they connect citizen rewards, driver performance, and admin analytics.
+**Speaker notes:** Keep this short. The scan table is the centre of the design; the reward and admin screens just read from it.
 
-## Slide 7: Clear feedback and a visible incentive
+## Slide 7: What the citizen sees
 
-- Pickup countdown, token balance, Civic Score arc.
-- QR download, print, and regeneration with geofence capture.
+- Countdown, token balance and score arc in one place.
+- QR can be downloaded, printed or rotated with a new geofence.
 
-**Speaker notes:** Show the citizen dashboard first, then the QR panel. The QR is not decorative; it is the credential for verification.
+**Speaker notes:** Show the dashboard first, then the QR panel. The QR is the credential, not just a picture.
 
-## Slide 8: Driver and administrator workspaces
+## Slide 8: Driver and admin views
 
-- Drivers see assigned route, bins, scans, and wage.
-- Administrators see city-wide stats, scan analytics, scores, and payroll.
+- Drivers see the route, scans, strikes and wage.
+- Admins see bins, scans, scores and stored payroll rows.
 
-**Speaker notes:** The same scan event updates both views. This is the operational value for municipalities and startups.
+**Speaker notes:** The driver performance tracker shows strikes and wage; the scan list is a separate card. The admin payroll table is read-only in this version.
 
-## Slide 9: Civic Points make good behavior visible
+## Slide 9: Civic Points, with clear limits
 
-- 300-900 bounded score with three tiers: Eco-Novice, Civic Champion, Elite Guardian.
-- +15 for a verified pickup, +30 for accurate segregation, +5 streak bonus.
-- -50 for a false complaint; every change is written to a ledger.
-- Green tokens are redeemable in a rewards store.
-- Leaderboard and score arc provide social feedback.
+- Score runs from 300 to 900 with three tiers.
+- Only +15 for a scan and +30 for a proof upload are triggered.
+- +5 streak and -50 false complaint are defined but not used by the UI.
+- Green tokens can be redeemed in the rewards store.
+- The admin leaderboard has a placeholder trend arrow.
 
-**Speaker notes:** This is the research/behavioral angle: verifiable events make a points system fairer than self-reporting.
+**Speaker notes:** This is a good place to show honesty. Say what works and what is only configured, instead of pretending the whole reward model is live.
 
-## Slide 10: Repository and demo checks
+## Slide 10: What we checked
 
 | Check | Method | Result |
 | --- | --- | --- |
 | Lint | npm run lint | Passed |
-| Production build | npm run build | Passed, 2092 modules |
-| CI | GitHub Actions on main | all runs passed |
-| Screenshots | 8 pages at 1440 x 900 | Validated |
-| Theme | Computed browser styles | Palette confirmed |
-| Seed | npm run seed:demo | Idempotent |
+| Production build | npm run build | Passed; ~93 kB CSS, ~798 kB JS |
+| CI | GitHub Actions, push and PR | Workflow defined; history external |
+| Screenshots | 8 screens at 1440 x 900 | Captured from seeded app |
+| Seed | npm run seed:demo | Repeatable; some rows recreated |
+| Proof upload | Camera file-picker demo | Simulated; no AI model |
 
-**Speaker notes:** Mention that CI runs on every push and that eight screenshots were generated from the live seeded app.
+**Speaker notes:** CI runs on pushes and pull requests. I am not claiming a fixed run count because that history lives on GitHub, not in the repo.
 
-## Slide 11: Reproducible demo dataset
+## Slide 11: Seeded data for the walkthrough
 
 | Artifact | Seeded value |
 | --- | --- |
-| Demo users | 3 role accounts + local extras |
+| Demo users | 3 role accounts |
 | Zones / routes | 3 / 1 active route |
-| Bins | 6 (stable, critical, overflowing) |
+| Bins | 6 |
 | Active QR token | 1 with saved geofence |
 | QR scans | 4 (3 success, 1 mismatch) |
 | Civic score | 640, Civic Champion |
-| Ledger entries | 3 |
-| Rewards / payroll | 6 / 1 |
+| Ledger entries | 3, seeded with superuser access |
+| Rewards | 6 (4 seed + 2 migration) |
+| Payroll | 1 stored row; wage shown from strikes |
 
-**Speaker notes:** The seed script is idempotent. It intentionally includes a failed scan so analytics show realistic states.
+**Speaker notes:** The seed script is repeatable. It includes one failed scan on purpose so the analytics screen is not all green.
 
-## Slide 12: Why this fits hackathons, research, and startups
+## Slide 12: Where this could fit
 
-**Potential pilots**
+**Possible first pilots**
 
 - Residential societies and gated communities.
-- Municipal ward-level collection contracts.
-- Campus and industrial estate waste programs.
-- Partner-led rewards and sustainability programs.
+- A single municipal ward or campus.
+- Waste programs with a partner rewards brand.
+- Small contracts where pickup proof matters.
 
 **Main points**
 
-- Hackathon: complete demo, working QR scan flow, polished UI, live GitHub repo.
-- Research: reproducible workflow, measurable verification rule, discussable limitations.
-- Startup: clear roles, operational analytics, and a path to municipal SaaS pilots.
+- Hackathon: short live demo using the seeded accounts.
+- Research: clear method and limits that can be discussed.
+- Startup: role model and dashboards that can be piloted.
 
-**Speaker notes:** Adapt the framing to the audience: judges want a demo, researchers want method, investors want a path to deployment.
+**Speaker notes:** Match the pitch to the room. Judges care about the demo, researchers care about the method, and startup people care about a realistic first pilot.
 
-## Slide 13: Honest constraints and next steps
+## Slide 13: What is not done yet
 
-- Browser GPS can be spoofed or shared; QR tokens can be photographed.
-- Camera scan requires permission; manual fallback mitigates failure.
-- Proof-of-waste image verification is simulated, not ML-backed.
-- Offline collection is not yet supported.
-- Location and proof images require consent and retention policies.
-- Next: offline queue, server attestation, ML proof, dynamic routing, pilot study.
+- Browser GPS can be spoofed; QR codes can be shared.
+- Proof image check is simulated, not machine learning.
+- Ledger writes fail for normal users under current rules.
+- Payroll has no create or edit screen.
+- No offline queue, so weak networks are a problem.
+- Next: server checks, real image model, offline mode, pilot study.
 
-**Speaker notes:** Be candid. Judges and reviewers value a clear understanding of what is proven and what is future work.
+**Speaker notes:** Be direct about the gaps. It makes the rest of the presentation more believable.
 
 ## Slide 14: CleanConnect
 
 
-**Speaker notes:** Close with the repository link and invite questions. Offer to walk through the QR scan flow live.
+**Speaker notes:** End with the GitHub link and invite questions. If someone asks about accuracy, point to the limitations slide instead of bluffing.

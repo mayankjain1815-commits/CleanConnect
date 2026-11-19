@@ -14,7 +14,7 @@ Municipal waste collection is hard to audit. Trucks can skip streets, citizens c
 
 - The citizen generates a unique, rotatable QR code tied to their bin and its GPS location.
 - The driver scans that code at the curb.
-- The server records the scan together with the driver's GPS position and the calculated distance.
+- The app saves the scan with the driver's GPS position and the calculated distance. The check itself currently runs in the browser.
 - A scan succeeds only inside a 50 m geofence (plus a capped allowance for GPS accuracy).
 - Successful scans update the citizen's Civic Score, store a scan history, and feed driver payroll and admin analytics.
 
@@ -25,7 +25,7 @@ Municipal waste collection is hard to audit. Trucks can skip streets, citizens c
 - Personal dashboard with next pickup window, green token balance, and Civic Score arc.
 - **My Dustbin QR** — generate, download, print, and rotate a bin QR code bound to a saved geofence.
 - Scan history with driver, distance, and verification status.
-- Waste proof upload for AI-assisted segregation verification.
+- Waste proof upload with a simulated verification result. No AI model is bundled yet.
 - Rewards store with token redemption.
 - Civic Score ledger with tier progression: Eco-Novice → Civic Champion → Elite Guardian.
 - Complaints flow for missed or problematic collections.
@@ -118,7 +118,7 @@ python scripts/generate-submission-docs.py
 ├── scripts/
 │   ├── generate-submission-docs.py  # Reproducible report/deck generator
 │   ├── requirements-docs.txt        # Pinned Python dependencies for the generator
-│   └── seed-demo.mjs                # Idempotent local demo data seeder
+│   └── seed-demo.mjs                # Repeatable local demo data seeder
 ├── package.json              # npm workspaces + convenience scripts
 └── README.md
 ```
@@ -160,7 +160,7 @@ PB_SUPERUSER_EMAIL=admin@cleanconnect.local
 PB_SUPERUSER_PASSWORD=change-this-password
 ```
 
-`PB_ENCRYPTION_KEY` must be exactly 32 characters. The superuser values are read by the first migration, so set them before starting PocketBase with an empty data directory.
+`PB_ENCRYPTION_KEY` must be exactly 32 characters. The superuser values are read by the first migration, so set them before starting PocketBase with an empty data directory. This step is only for a fresh production-style data directory. The checked-in local `pb_data_local` used by `npm run dev` is already set up and does not need this file.
 
 ### 3. Configure the frontend
 
@@ -177,20 +177,18 @@ VITE_POCKETBASE_URL=http://127.0.0.1:8090
 
 ### 4. Run the app
 
-From the repository root, with the PocketBase environment variables exported:
+From the repository root, run:
 
 ```bash
-set -a
-source apps/pocketbase/.env
-set +a
-
 npm run dev
 ```
 
 This starts:
 
-- PocketBase at `http://127.0.0.1:8090`
+- PocketBase at `http://127.0.0.1:8090` using the local `pb_data_local` data directory
 - Vite at `http://127.0.0.1:3000`
+
+The local PocketBase data directory is already initialized, so no `PB_ENCRYPTION_KEY` or `apps/pocketbase/.env` file is needed for local development. If either port is already busy, stop the older dev process first, then run `npm run dev` again.
 
 ### 5. Seed demo data
 
@@ -202,13 +200,13 @@ PB_SUPERUSER_PASSWORD='your-superuser-password' \
 npm run seed:demo
 ```
 
-The seed script is idempotent. It creates or updates:
+The seed script gives the same demo state each run. Most records are created or updated in place, while scans, ledger rows and the payroll row are recreated. It creates or updates:
 
 - 3 demo users (citizen, driver, admin)
 - Citizen profile, 640 green tokens, pickup window, and Civic Score of 640
 - Driver profile, truck, wallet, and active ZONE-A1 route
 - 3 zones and 6 bins with mixed fill levels
-- 6 rewards
+- 6 rewards (4 from the seed script, 2 from a migration)
 - 1 active bin QR token with a saved geofence
 - 4 QR scan records and 3 Civic Score ledger entries
 - 1 payroll adjustment

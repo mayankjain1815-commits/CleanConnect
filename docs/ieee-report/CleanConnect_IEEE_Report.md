@@ -1,39 +1,39 @@
-# CleanConnect: QR- and Geofence-Verified Waste Collection with Civic Incentives
+# CleanConnect: QR and GPS Based Pickup Verification for Waste Collection
 
 **Author:** Mayank Jain  
-**Affiliation:** Independent Project, CleanConnect Research and Development
+**Affiliation:** Independent student project
 
 ## Abstract
 
-Urban waste collection systems often lack verifiable, household-level accountability. Missed pickups are difficult to prove, driver routes are opaque, and citizens have little feedback when they participate correctly. This paper presents CleanConnect, a role-based web platform that verifies each collection by scanning a household bin QR code inside a GPS geofence. The system computes Haversine distance between the driver and the bin, tolerates phone GPS error with a capped accuracy buffer, records the verification outcome, and awards Civic Points to the household. A PocketBase backend stores role-specific data, enforces collection access rules, and supports dashboards for citizens, drivers, and administrators. The frontend is implemented with React, Vite, Tailwind CSS, and Recharts using a burgundy, cream, and sage visual system. We describe the architecture, verification workflow, incentive model, and a reproducible demo dataset. Validation includes automated lint and production build checks, a passing continuous-integration pipeline, eight interface screenshots, and an idempotent seed script. The results show that a low-cost QR and smartphone GPS workflow can provide actionable auditability without dedicated bin sensors. Limitations such as GPS spoofing, offline operation, and proof-image authenticity are discussed, followed by future work toward pilot deployment.
+In most neighbourhoods, waste collection is still tracked very roughly. A truck can pass a street and a household may still say its bin was not emptied, while the driver has no easy way to prove what happened. CleanConnect is a small web app we built around one verifiable pickup. Each household gets a QR token tied to the saved location of its bin. The driver scans it at the curb, the app reads GPS, checks the distance, and saves the result as a scan record. A successful pickup adds Civic Points to the citizen's score and shows up in the driver and admin views. The frontend uses React and Vite, and PocketBase handles login, the database and the REST API. We checked the lint and production build, ran the demo seed script, and captured eight screenshots from the running app. This is still a prototype. The distance check runs in the browser, the proof-image check is simulated, and two of the configured point reasons are not triggered by the interface yet. Those limits are stated here instead of being hidden.
 
-**Index Terms:** civic technology, geofencing, QR codes, smart cities, waste management, PocketBase, React
+**Index Terms:** QR code, GPS, geofencing, waste collection, civic points, PocketBase, React
 
 ## I. INTRODUCTION
 
-Municipal solid-waste collection is a high-frequency public service, yet its quality is usually measured at the route level rather than at the household level. A truck may pass a street without collecting a specific bin, a citizen may report a collection that did not occur, and supervisors may have no timestamped evidence linking a driver, a bin, and a location. These gaps weaken accountability and make incentive programs difficult to operate fairly.
+The idea for CleanConnect came from a small but common problem. A garbage truck may pass a street, yet one household can still say its bin was never emptied. The driver also has no simple way to show that the bin was collected. Most systems only track the route as a whole, so the exact handoff at one house is usually lost.
 
-CleanConnect addresses this gap with a lightweight verification loop. Each household generates a unique QR token bound to a saved bin location. During collection, the driver scans that token at the curb. The application reads the driver's GPS position, computes the distance to the bin, and records the scan as successful, location-mismatched, or invalid. Successful scans update the citizen's Civic Score and feed driver payroll and administrator analytics.
+Instead of putting a sensor in every bin, we tried a cheaper approach. Each household gets a QR sticker tied to the saved location of the bin. The driver scans it while collecting, the app takes a GPS reading, and the distance to the bin is calculated. The result is saved as a scan with a status, distance and timestamp. A good scan adds Civic Points to the citizen's score and also appears in the driver and admin views.
 
-The paper makes five contributions: (1) a role-based web application for citizens, drivers, and administrators; (2) an accuracy-aware geofence verification workflow using QR codes and smartphone GPS; (3) a Civic Points incentive model backed by an immutable-style ledger; (4) operational dashboards for scan analytics, bin fill levels, routes, and payroll; and (5) a reproducible demo dataset and CI workflow that support research demonstration and hackathon submission.
+The app has three workspaces. Citizens can generate a QR code, see their score and rewards, and upload a proof photo. Drivers see a route and scan bins. Administrators see bins, scans, scores and wage-related numbers. One point should be clear from the start: the distance check is done in the browser. PocketBase stores what the client sends, but it does not re-check the distance. That is acceptable for a prototype, not for a real municipal rollout.
 
-The remainder of this paper is organized as follows. Section II reviews related work. Section III describes the system architecture. Section IV presents the implementation methodology. Section V reports validation results. Section VI discusses limitations and ethical considerations, and Section VII concludes with future work.
+The following sections explain the related work, the design, what we actually implemented, and what we tested. We have also listed the parts that are still simulated or unfinished, because claiming otherwise would be misleading.
 
 ## II. BACKGROUND AND RELATED WORK
 
-Smart waste-management research has largely focused on sensor-enabled bins, route optimization, and city-scale monitoring. Surveys of IoT-enabled waste systems describe ultrasonic fill-level sensors, GPS-enabled trucks, and centralized dashboards [1], [2]. These approaches can improve collection efficiency, but they require dedicated hardware, maintenance, and connectivity for every bin. CleanConnect deliberately uses commodities that most participants already carry: a printed QR sticker and a smartphone with geolocation.
+Most smart-waste ideas in the literature add hardware to bins. Surveys describe fill-level sensors, GPS trackers on trucks and central dashboards [1], [2]. Those systems can work well, but every bin needs a device, a battery and maintenance. We wanted to see how far we could get with things people already carry: a printed QR code and a phone with location enabled.
 
-Civic gamification literature shows that points, badges, and feedback loops can encourage pro-environmental and community behavior [3], [4]. CleanConnect applies this idea through Civic Points, tier progression, a public-facing score arc, and a rewards store. Unlike a purely motivational interface, the incentive is triggered by a verifiable event: the geofenced pickup scan.
+Work on civic gamification shows that points and feedback can encourage better participation [3], [4]. CleanConnect uses that idea through Civic Points, three score tiers and a small rewards store. The points are meant to follow a scan event rather than a self-report, although the scan itself is still client-side at this stage.
 
-Distance verification uses the Haversine formula, a standard great-circle distance method for latitude and longitude pairs [5]. The browser Geolocation API supplies position and an accuracy estimate [9]. By adding a capped accuracy buffer to a 50 m base radius, the system reduces false rejections from imprecise phone GPS while keeping the geofence meaningful.
+The distance check uses the Haversine formula, which is a standard way to measure distance between two latitude and longitude points [5]. The browser Geolocation API gives both a position and an accuracy estimate [9]. We use a 50 m radius and add the reported accuracy up to 30 m more, so small GPS errors do not reject a real pickup.
 
-The implementation uses React and Vite for the client [6], [7], Tailwind CSS for styling [8], qrcode.react and jsQR for QR generation and decoding [10], [11], and PocketBase for the backend [12]. This combination reduces deployment complexity: the client is a static build, while PocketBase provides authentication, a SQLite database, REST endpoints, migrations, and server-side hooks.
+We built the client with React and Vite [6], [7], styled it with Tailwind CSS [8], and used qrcode.react and jsQR for QR generation and scanning [10], [11]. PocketBase [12] was chosen because it gives authentication, a database, REST routes, migrations and hooks in one small server.
 
 ## III. SYSTEM ARCHITECTURE
 
-CleanConnect is a three-role, client-server application. Citizens manage household profile data, generate a bin QR code, upload waste proof, and redeem rewards. Drivers view assigned routes and bins, then scan QR codes during collection. Administrators monitor city-wide operations, citizens, scan history, scores, and payroll. All roles share a single React client whose routes are protected by role checks.
+CleanConnect is a normal client-server app with three roles sharing one React frontend. Protected routes send each user to the right workspace. The citizen area holds the bin QR tool and score cards. The driver area holds the route and scanner. The admin area holds the wider operational view.
 
-Figure 1 summarizes the architecture. The React and Vite frontend communicates with PocketBase over REST. PocketBase enforces collection access rules, runs schema migrations, and executes custom hooks. Its SQLite collections store identity, routes, bins, QR tokens, scans, Civic Scores, rewards, complaints, verifications, and payroll adjustments.
+Figure 1 shows the whole setup. The frontend talks to PocketBase over REST. PocketBase handles login, collection rules, migrations and hooks. The database stores users, bins, QR tokens, scans, scores, rewards, verifications and payroll-related records.
 
 ![CleanConnect system architecture](figures/architecture.png)
 
@@ -44,72 +44,75 @@ Figure 1 summarizes the architecture. The React and Vite frontend communicates w
 | zones / routes | Service geography | zone_name, assigned_date, collection_status |
 | bins | Collection points | zone_id, fill_level, status, last_cleared |
 | bin_qr_tokens | Rotatable bin credentials | qr_token, geofence_lat/lng, is_active |
-| driver_qr_scans | Pickup evidence | scan_status, distance_meters, is_location_valid |
-| civic_scores / ledger | Incentive state | current_score, tier_rank, points_changed, reason |
+| driver_qr_scans | Client-checked pickup record | scan_status, distance_meters, is_location_valid |
+| civic_scores / ledger | Score plus admin-only ledger | current_score, tier_rank, points_changed, reason |
 | rewards / redemptions | Token economy | token_cost, tokens_spent, redemption_date |
-| payroll_adjustments | Driver wage | strike_count, deduction_amount, final_wage |
+| payroll_adjustments | Stored wage snapshot | strike_count, deduction_amount, final_wage |
 
 ### A. Frontend
 
-The frontend uses React 18, React Router 7, Tailwind CSS 3, Radix-based interface components, Recharts, Framer Motion, and Sonner notifications. The visual system is defined by CSS variables and Tailwind tokens: deep burgundy #590907 for primary surfaces, warm cream #E8D2B5 for text and primary actions, and sage #A5A79B for secondary text and borders. The client falls back to the /hcgi/platform PocketBase path when no development URL is configured, which supports Hostinger-style deployments.
+The client uses React 18, React Router 7, Tailwind CSS 3, Radix-based components, Recharts, Framer Motion and Sonner. The theme is written as CSS variables and Tailwind tokens: burgundy #590907 for main surfaces, cream #E8D2B5 for text and buttons, and sage #A5A79B for softer text and borders. If no development URL is set, the client falls back to the /hcgi/platform PocketBase path used by Hostinger-style deployments.
 
 ### B. Backend and data model
 
-PocketBase 0.38 supplies authentication for the users collection plus typed base collections. Migrations under apps/pocketbase/pb_migrations define the schema and seed default rewards; hooks under apps/pocketbase/pb_hooks add migration utilities, external dashboard routing, and mailer behavior. Table I lists the core collections and their purpose.
+PocketBase 0.38.0 provides the built-in users collection and 14 custom collections created through migrations. A few migrations also seed default rewards and demo records. The hooks folder contains migration helpers, dashboard routing and mailer behaviour. Table I lists the collections that matter most to the pickup flow.
 
 ### C. Role-based workflows
 
-Protected routes map each role to its workspace: /citizen-dashboard, /driver-dashboard, and /admin-panel. The /instructions route redirects to a role-specific guide. Profile and settings pages are shared, while the dustbin QR tab is exposed only to citizens. This separation keeps sensitive operations such as payroll adjustment and scan analytics in the administrator workspace.
+The role routes are /citizen-dashboard, /driver-dashboard and /admin-panel. The /instructions route redirects to a guide for the signed-in role. Settings and profile pages are shared, but the dustbin QR tab only appears for citizens. Scan analytics and wage views are kept in the admin and driver workspaces.
 
 ## IV. IMPLEMENTATION AND METHODOLOGY
 
-The verification workflow was designed to be reproducible with no dedicated bin hardware. Figure 2 shows the complete loop from token generation to reward issuance.
+The main idea was to avoid extra bin hardware and keep the flow easy to demo. Figure 2 shows the path from token creation to the scan record.
 
 ![QR verification workflow](figures/qr-flow.png)
 
 ### A. QR token lifecycle
 
-A citizen opens Profile -> My Dustbin QR and requests a token. The client combines the citizen identifier, house address, timestamp, and a UUID, then hashes the string with SHA-256 through the Web Crypto API. The resulting 64-character hex token is stored with the house address and the GPS coordinates captured at the bin. Regenerating a token deactivates all previous active tokens for that citizen, and the QR code can be downloaded or printed.
+In Profile -> My Dustbin QR, the citizen asks for a token. The browser joins the citizen id, house address, current time and a UUID, then hashes that string with SHA-256 through the Web Crypto API. The result is a 64-character hex token. The bin's saved latitude and longitude are stored beside the token, not inside the hash. Creating a new token deactivates the earlier active ones, and the code can be downloaded or printed.
 
 ### B. Geofence verification
 
-The driver scans the QR code with the browser camera using jsQR, or enters the token manually. The client requests a high-accuracy GPS reading and computes the Haversine distance to the stored bin location. The effective radius is 50 m plus the device-reported accuracy, capped at an additional 30 m. A scan is stored as success, location_mismatch, or invalid_token, together with driver, citizen, coordinates, distance, and validity flag. Camera failure, missing location, or token lookup failure are handled explicitly so the driver receives actionable feedback.
+The driver can scan the QR with the camera using jsQR or type the token by hand. The browser asks for a high-accuracy GPS reading and calculates the Haversine distance to the bin. The allowed radius is 50 m plus the device accuracy, capped at 30 m extra. The scan is saved as success, location_mismatch or invalid_token with the driver, citizen, coordinates, distance and validity flag. Camera errors and token lookup errors are caught. A missing GPS reading currently falls through to a generic error toast, which is one of the rough edges we know about.
 
 ### C. Civic Score and rewards
 
-The reward model uses a bounded score from 300 to 900. A verified pickup awards 15 points, accurate segregation awards 30 points, a streak bonus adds 5 points, and a false complaint subtracts 50 points. Scores map to Eco-Novice, Civic Champion, and Elite Guardian tiers. Each change writes a ledger entry with reason and timestamp. Citizens redeem green tokens in a rewards store; redemption records and token balances are stored in PocketBase.
+The score is bounded between 300 and 900. The point map defines +15 for a verified pickup, +30 for an accurate segregation proof, +5 for a streak bonus and -50 for a false complaint. In the running app, only the first two are actually triggered: +15 after a successful scan and +30 after a proof upload. The streak and complaint values exist in the map and as a filter label, but no interface action awards or deducts them yet. Scores map to Eco-Novice below 551, Civic Champion from 551 and Elite Guardian from 751.
+
+The code tries to write a ledger row after every score change. The ledger collection only allows admins to create rows, so normal citizen and driver calls fail silently and the warning is logged in the console. The three ledger rows in the demo were written with superuser access during seeding. Citizens can still redeem green tokens in the rewards store, and redemptions plus token debits do work.
 
 ### D. Analytics and payroll
 
-The administrator panel merges bins, drivers, citizens, scores, payroll adjustments, and ledger entries into operational views. Scan analytics support filtering by status and sorting by time. Bin cards show fill level and status, while payroll adjustments support strike counts, deduction percentages, deduction amounts, and final wage. The performance tracker gives drivers a daily view of scans, deductions, and wage.
+The admin panel shows bin fill levels, scan analytics with status filters and sorting, and a neighbourhood score leaderboard. The leaderboard's small trend arrow is placeholder data, not a real calculation. Payroll numbers are worked out in the browser from the driver's strike count and base wage. The payroll_adjustments collection stores strike counts, percentages, amounts and final wage, but there is no admin screen to add or edit those rows. Drivers see strikes, deduction and final wage in the performance tracker; today's scans are listed in a separate card.
 
 ### E. Validation setup
 
-A seed script creates or refreshes a coherent local dataset: three demo users, citizen and driver profiles, three zones, six bins, an active QR token, a route, scan history, a Civic Score with ledger entries, rewards, and a payroll adjustment. The script is idempotent, which makes screenshots, demos, and automated checks repeatable.
+The seed script gives us a repeatable demo: three role accounts, citizen and driver profiles, three zones, six bins, one active QR token, a route, four scans, a score with three ledger rows, rewards and one payroll row. Four rewards come from the seed script and two from an earlier migration, giving six in total. Most records are upserted, while scans, ledger rows and the payroll row are deleted and recreated on each run. That keeps the screenshots and demo states consistent.
 
 ## V. EVALUATION AND RESULTS
 
-The system was evaluated on a local development stack with Vite on port 3000 and PocketBase on port 8090. Validation combined static checks, build checks, CI execution, browser rendering inspection, and a seeded functional dataset. Table II summarizes the checks.
+We tested the app on a local stack with Vite on port 3000 and PocketBase on port 8090. The checks were simple on purpose: lint, build, CI, a seeded dataset and screenshots from the running UI. Table II lists them.
 
 | Check | Method | Result |
 | --- | --- | --- |
 | Lint | npm run lint | Passed |
-| Production build | npm run build | Passed, 2092 modules |
-| CI | GitHub Actions on main | all runs passed |
-| Screenshots | 8 pages at 1440 x 900 | Validated |
-| Theme | Computed browser styles | Palette confirmed |
-| Seed | npm run seed:demo | Idempotent |
+| Production build | npm run build | Passed; ~93 kB CSS, ~798 kB JS |
+| CI | GitHub Actions, push and PR | Workflow defined; history external |
+| Screenshots | 8 screens at 1440 x 900 | Captured from seeded app |
+| Seed | npm run seed:demo | Repeatable; some rows recreated |
+| Proof upload | Camera file-picker demo | Simulated; no AI model |
 
 | Artifact | Seeded value |
 | --- | --- |
-| Demo users | 3 role accounts + local extras |
+| Demo users | 3 role accounts |
 | Zones / routes | 3 / 1 active route |
-| Bins | 6 (stable, critical, overflowing) |
+| Bins | 6 |
 | Active QR token | 1 with saved geofence |
 | QR scans | 4 (3 success, 1 mismatch) |
 | Civic score | 640, Civic Champion |
-| Ledger entries | 3 |
-| Rewards / payroll | 6 / 1 |
+| Ledger entries | 3, seeded with superuser access |
+| Rewards | 6 (4 seed + 2 migration) |
+| Payroll | 1 stored row; wage shown from strikes |
 
 ![Citizen dashboard](../screenshots/03-citizen-dashboard.png)
 
@@ -117,29 +120,29 @@ The system was evaluated on a local development stack with Vite on port 3000 and
 
 ### A. Functional and build validation
 
-ESLint reported no errors with npm run lint. The production build completed successfully, producing a CSS bundle of approximately 93 kB and a JavaScript bundle of approximately 798 kB before gzip. GitHub Actions ran lint and build on every push to main; both CI runs passed. Eight screenshots were captured at 1440 x 900 pixels across home, login, citizen dashboard, citizen instructions, dustbin QR, driver dashboard, admin panel, and admin instructions pages. Computed browser styles confirmed the burgundy background rgb(90, 9, 7), cream text rgb(232, 210, 181), and sage secondary text rgb(164, 166, 155).
+npm run lint passed with no errors. npm run build also passed and produced a CSS bundle of about 93 kB and a JavaScript bundle of about 798 kB before gzip. The GitHub Actions workflow runs lint and build on pushes and pull requests to main. Run history is not part of the repository, so this report does not claim a fixed pass count. We captured eight screenshots at 1440 x 900 for the home, login, citizen dashboard, citizen instructions, dustbin QR, driver dashboard, admin panel and admin instructions screens. The rendered burgundy, cream and sage colours matched the theme values used in the code.
 
 ### B. Demo dataset
 
-Table III reports the seeded dataset used for evaluation and screenshots. The dataset intentionally includes both successful and failed scans so that analytics and feedback states are visible during a demonstration.
+Table III shows the seeded data used for the screenshots. We included both successful and mismatched scans so the analytics page has something realistic to display.
 
 ### C. Interface evidence
 
-Figure 3 shows the citizen dashboard with pickup countdown, green-token balance, Civic Score arc, and rewards. Figure 4 shows the administrator panel with operational statistics and scan analytics. Both are rendered directly from the seeded local instance, not from static mockups.
+Figure 3 shows the citizen dashboard with the pickup countdown, token balance, score arc and rewards. Figure 4 shows the admin panel with operational numbers and scan analytics. Both are screenshots of the seeded local app, not static designs.
 
 ## VI. LIMITATIONS AND ETHICAL CONSIDERATIONS
 
-The current geofence is based on browser-reported GPS. A determined participant could spoof location or photograph and share a QR token. The capped accuracy buffer improves usability but does not establish cryptographic proof of physical presence. Future deployments should combine server-side location attestation, token rotation, anomaly detection, and occasional supervisor audits.
+The biggest limitation is that the geofence runs in the browser. A user could spoof GPS or photograph someone else's QR code. The accuracy buffer helps with normal phone error, but it is not proof that the driver was actually at the bin. A real deployment would need server-side checks, token rotation, anomaly detection and occasional supervisor review.
 
-Proof-of-waste verification in the citizen camera flow is currently simulated in the client; no trained model is bundled. Location data and proof images are personal information and should be retained only as long as necessary, with clear consent and access controls. The encryption key for PocketBase must be stored outside version control, and losing it makes encrypted data unrecoverable.
+The proof-image flow is also simulated. The camera component only takes a file and shows a preview. The demo sets a confidence value of 95 in code and no machine-learning model is bundled. The proof upload does add 30 Civic Points, but the image itself is not judged by AI. Location and proof images are personal data, so a real pilot would need consent, short retention periods and clear access rules.
 
-The application assumes connectivity during collection. A production deployment for areas with unstable mobile networks would need an offline queue with signed events and later reconciliation. The current role rules are suitable for a prototype; a municipal pilot should add stronger audit logging, role administration, and penetration testing.
+There are a few smaller gaps too. Ledger writes are blocked for non-admin callers by the current collection rule. The admin leaderboard uses a placeholder trend value. Payroll has no edit screen. The app expects a connection during collection, so an offline queue would be needed for weak network areas. The encryption key for PocketBase must stay outside version control because losing it makes encrypted data unrecoverable.
 
 ## VII. CONCLUSION AND FUTURE WORK
 
-CleanConnect demonstrates that household-level waste-collection verification can be implemented with inexpensive, widely available technology. A QR token tied to a saved geofence, combined with an accuracy-aware Haversine check, creates an auditable link between citizen, driver, time, and place. The resulting scan event powers Civic Points, rewards, performance tracking, and administrative analytics in one role-based application.
+CleanConnect works as a prototype. A QR token, a saved bin location and a phone GPS reading are enough to create a scan record that citizens, drivers and admins can all see. The app also shows how points and rewards can be tied to that record without adding a sensor to every bin.
 
-Future work includes an offline-first progressive web app, server-verified location challenges, image-based waste-segregation classification, dynamic route optimization, carbon-credit integration, and a controlled pilot study with a municipality. Usability testing with sanitation workers and residents will be essential to refine the scanner flow and incentive design before production rollout.
+There is still clear work left. The distance check should move to the server, the proof flow needs a real classifier, and the app needs an offline queue for field use. We would also add real payroll editing, remove the placeholder leaderboard trend, and run a small pilot with residents and sanitation workers before calling the system production-ready.
 
 ## References
 

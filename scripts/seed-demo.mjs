@@ -7,7 +7,7 @@
  *   PB_SUPERUSER_PASSWORD=CleanConnect123! \
  *   npm run seed:demo
  *
- * The script is idempotent: users, citizens, drivers, zones, bins, rewards,
+ * The script is repeatable: users, citizens, drivers, zones, bins, rewards,
  * civic scores and the active QR token are upserted. Demo scans and ledger
  * entries are recreated so the dashboards always show fresh activity.
  */
